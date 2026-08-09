@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "neuralforge"
+version = "1.0.0"
+description = "Local-first AI platform — fine-tune, build RAG pipelines, evaluate, and deploy entirely on your hardware."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "PlayNexus" }]
+keywords = ["ai", "local", "fine-tuning", "rag", "evaluation", "ml", "privacy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "requests>=2.31.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+    "numpy>=1.24.0",
+]
+
+[project.scripts]
+neuralforge = "neuralforge.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/Nortaq-PlayNexus/neuralforge"
+Repository = "https://github.com/Nortaq-PlayNexus/neuralforge"
+
+[tool.setuptools.packages.find]
+include = ["neuralforge*"]
