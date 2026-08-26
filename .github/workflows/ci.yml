@@ -24,6 +24,6 @@ jobs:
       - name: Syntax check
         run: python -m compileall -q neuralforge
       - name: Lint (ruff)
-        run: ruff check . || true
+        run: ruff check .
       - name: Test
         run: pytest -q

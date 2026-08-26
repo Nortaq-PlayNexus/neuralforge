@@ -24,7 +24,9 @@ class Display:
         console.print(f"[bold]Query:[/bold] {result.get('query', '')}")
         console.print()
         for i, r in enumerate(result.get("results", []), 1):
-            console.print(f"  [{i}] score={r.get('score', 0)} source={r.get('source', '?')}")
+            console.print(
+                f"  [{i}] score={r.get('score', 0)} source={r.get('source', '?')}"
+            )
             text = r.get("text", "")[:200]
             console.print(f"      {text}...")
         console.print()
@@ -61,7 +63,8 @@ class Display:
                 "[bold]Supported formats:[/bold]  JSONL, CSV, JSON\n"
                 "[bold]Export formats:[/bold]      GGUF, ONNX, Docker\n"
                 "[bold]Requirements:[/bold]        Python 3.11+, optional: transformers, torch, peft",
-                border_style="blue", expand=True,
+                border_style="blue",
+                expand=True,
             )
         )
         console.print()

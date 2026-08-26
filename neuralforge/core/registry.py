@@ -12,7 +12,9 @@ class ModelRegistry:
 
     def __init__(self, db_path: str | None = None, display: Any = None):
         self.display = display
-        self.db_path = Path(db_path) if db_path else Path.home() / ".neuralforge" / "registry.json"
+        self.db_path = (
+            Path(db_path) if db_path else Path.home() / ".neuralforge" / "registry.json"
+        )
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.models: dict[str, dict] = {}
         self._load()
@@ -48,7 +50,9 @@ class ModelRegistry:
         }
 
         if name in self.models:
-            entry["created_at"] = self.models[name].get("created_at", entry["created_at"])
+            entry["created_at"] = self.models[name].get(
+                "created_at", entry["created_at"]
+            )
 
         self.models[name] = entry
         self._save()
@@ -71,7 +75,9 @@ class ModelRegistry:
         b = self.models.get(model_b)
         if not a or not b:
             if self.display:
-                self.display.print_error(f"Model not found: {model_a if not a else model_b}")
+                self.display.print_error(
+                    f"Model not found: {model_a if not a else model_b}"
+                )
             return None
 
         comparison = {
@@ -80,7 +86,9 @@ class ModelRegistry:
             "metric_comparison": {},
         }
 
-        all_metrics = set(list(a.get("metrics", {}).keys()) + list(b.get("metrics", {}).keys()))
+        all_metrics = set(
+            list(a.get("metrics", {}).keys()) + list(b.get("metrics", {}).keys())
+        )
         for metric in all_metrics:
             val_a = a.get("metrics", {}).get(metric)
             val_b = b.get("metrics", {}).get(metric)
@@ -92,7 +100,9 @@ class ModelRegistry:
         if self.display:
             self.display.print_step(f"\n--- Comparison: {model_a} vs {model_b} ---")
             for metric, vals in comparison["metric_comparison"].items():
-                self.display.print_step(f"  {metric}: {vals[model_a]} | {vals[model_b]}")
+                self.display.print_step(
+                    f"  {metric}: {vals[model_a]} | {vals[model_b]}"
+                )
 
         return comparison
 

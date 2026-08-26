@@ -43,12 +43,23 @@ class LocalFinetuner:
         if self.display:
             self.display.print_step(f"Dataset loaded: {len(dataset)} samples")
             self.display.print_step(f"Base model: {model_name}")
-            self.display.print_step(f"Config: epochs={epochs}, lr={lr}, batch_size={batch_size}")
-            self.display.print_step(f"LoRA: r={lora_r}, alpha={lora_alpha}, dropout={lora_dropout}")
-            self.display.print_step(f"Scheduler: {scheduler}, warmup: {warmup_steps}, grad_accum: {gradient_accumulation_steps}")
+            self.display.print_step(
+                f"Config: epochs={epochs}, lr={lr}, batch_size={batch_size}"
+            )
+            self.display.print_step(
+                f"LoRA: r={lora_r}, alpha={lora_alpha}, dropout={lora_dropout}"
+            )
+            self.display.print_step(
+                f"Scheduler: {scheduler}, warmup: {warmup_steps}, grad_accum: {gradient_accumulation_steps}"
+            )
 
         try:
-            from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer
+            from transformers import (
+                AutoTokenizer,
+                AutoModelForCausalLM,
+                TrainingArguments,
+                Trainer,
+            )
             from peft import LoraConfig, get_peft_model, TaskType
         except ImportError:
             if self.display:
@@ -57,9 +68,21 @@ class LocalFinetuner:
                     "  pip install transformers peft datasets accelerate torch"
                 )
             self._write_training_script(
-                model_name, dataset_path, output_dir, epochs, lr, batch_size, max_length,
-                lora_r, lora_alpha, lora_dropout, lora_targets, scheduler, warmup_steps,
-                gradient_accumulation_steps, early_stopping,
+                model_name,
+                dataset_path,
+                output_dir,
+                epochs,
+                lr,
+                batch_size,
+                max_length,
+                lora_r,
+                lora_alpha,
+                lora_dropout,
+                lora_targets,
+                scheduler,
+                warmup_steps,
+                gradient_accumulation_steps,
+                early_stopping,
             )
             return True
 
@@ -84,7 +107,9 @@ class LocalFinetuner:
         if self.display:
             trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
             total = sum(p.numel() for p in model.parameters())
-            self.display.print_step(f"Trainable parameters: {trainable:,} / {total:,} ({100*trainable/total:.1f}%)")
+            self.display.print_step(
+                f"Trainable parameters: {trainable:,} / {total:,} ({100 * trainable / total:.1f}%)"
+            )
 
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
@@ -95,7 +120,7 @@ class LocalFinetuner:
             "constant": "constant",
         }.get(scheduler, "cosine")
 
-        training_args = TrainingArguments(
+        TrainingArguments(
             output_dir=str(output_path),
             num_train_epochs=epochs,
             per_device_train_batch_size=batch_size,
@@ -113,16 +138,32 @@ class LocalFinetuner:
 
         if self.display:
             self.display.print_step("Starting fine-tuning...")
-            self.display.print_step("(This may take a while depending on your hardware)")
+            self.display.print_step(
+                "(This may take a while depending on your hardware)"
+            )
 
         self._write_training_script(
-            model_name, dataset_path, output_dir, epochs, lr, batch_size, max_length,
-            lora_r, lora_alpha, lora_dropout, lora_targets, scheduler, warmup_steps,
-            gradient_accumulation_steps, early_stopping,
+            model_name,
+            dataset_path,
+            output_dir,
+            epochs,
+            lr,
+            batch_size,
+            max_length,
+            lora_r,
+            lora_alpha,
+            lora_dropout,
+            lora_targets,
+            scheduler,
+            warmup_steps,
+            gradient_accumulation_steps,
+            early_stopping,
         )
 
         if self.display:
-            self.display.print_success(f"Training script written to {output_dir}/train.py")
+            self.display.print_success(
+                f"Training script written to {output_dir}/train.py"
+            )
             self.display.print_step("Run with: python train.py")
 
         return True
@@ -144,6 +185,7 @@ class LocalFinetuner:
                         data = [data]
                 elif p.suffix == ".csv":
                     import csv
+
                     reader = csv.DictReader(f)
                     data = list(reader)
         except Exception:
@@ -151,17 +193,32 @@ class LocalFinetuner:
         return data
 
     def _write_training_script(
-        self, model: str, dataset: str, output: str, epochs: int, lr: float,
-        batch_size: int, max_len: int, lora_r: int = 16, lora_alpha: int = 32,
-        lora_dropout: float = 0.1, lora_targets: list[str] | None = None,
-        scheduler: str = "cosine", warmup_steps: int = 0,
-        gradient_accumulation_steps: int = 1, early_stopping: bool = False,
+        self,
+        model: str,
+        dataset: str,
+        output: str,
+        epochs: int,
+        lr: float,
+        batch_size: int,
+        max_len: int,
+        lora_r: int = 16,
+        lora_alpha: int = 32,
+        lora_dropout: float = 0.1,
+        lora_targets: list[str] | None = None,
+        scheduler: str = "cosine",
+        warmup_steps: int = 0,
+        gradient_accumulation_steps: int = 1,
+        early_stopping: bool = False,
     ):
         if lora_targets is None:
             lora_targets = ["q_proj", "v_proj"]
         targets_str = json.dumps(lora_targets)
 
-        scheduler_type = {"cosine": "cosine", "linear": "linear", "constant": "constant"}.get(scheduler, "cosine")
+        scheduler_type = {
+            "cosine": "cosine",
+            "linear": "linear",
+            "constant": "constant",
+        }.get(scheduler, "cosine")
 
         script = f'''#!/usr/bin/env python3
 """Auto-generated training script by NeuralForge."""

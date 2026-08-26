@@ -20,7 +20,7 @@ class VectorStore:
         self.metadata: list[dict] = []
 
     def _tokenize(self, text: str) -> list[str]:
-        return re.findall(r'\b\w+\b', text.lower())
+        return re.findall(r"\b\w+\b", text.lower())
 
     def _compute_idf(self):
         n = len(self.documents)
@@ -65,7 +65,9 @@ class VectorStore:
             return 0.0
         return dot / (norm_a * norm_b)
 
-    def search(self, query: str, top_k: int = 5, metadata_filter: dict | None = None) -> list[dict]:
+    def search(
+        self, query: str, top_k: int = 5, metadata_filter: dict | None = None
+    ) -> list[dict]:
         q_vec = self._compute_tfidf(query)
         scored = []
         for i, doc_vec in enumerate(self.tfidf_matrix):
@@ -123,6 +125,7 @@ class RAGPipeline:
 
         try:
             import faiss
+
             self.faiss = faiss
             self._has_faiss = True
         except ImportError:
@@ -144,13 +147,21 @@ class RAGPipeline:
 
         self.chunks = self._chunk_documents(chunk_size, overlap)
         if self.display:
-            self.display.print_step(f"Created {len(self.chunks)} chunks (size={chunk_size}, overlap={overlap})")
+            self.display.print_step(
+                f"Created {len(self.chunks)} chunks (size={chunk_size}, overlap={overlap})"
+            )
 
         self._build_index()
 
-    def query(self, query: str, top_k: int = 5, metadata_filter: dict | None = None) -> dict:
+    def query(
+        self, query: str, top_k: int = 5, metadata_filter: dict | None = None
+    ) -> dict:
         if not self.chunks:
-            return {"query": query, "results": [], "answer": "No documents indexed. Run 'rag build' first."}
+            return {
+                "query": query,
+                "results": [],
+                "answer": "No documents indexed. Run 'rag build' first.",
+            }
 
         results = self._search(query, top_k, metadata_filter)
         context = "\n\n".join(r["text"] for r in results)
@@ -169,7 +180,15 @@ class RAGPipeline:
             return [self._read_file(p)]
         if p.is_dir():
             for f in sorted(p.rglob("*")):
-                if f.suffix.lower() in (".txt", ".md", ".py", ".json", ".yaml", ".yml", ".csv"):
+                if f.suffix.lower() in (
+                    ".txt",
+                    ".md",
+                    ".py",
+                    ".json",
+                    ".yaml",
+                    ".yml",
+                    ".csv",
+                ):
                     doc = self._read_file(f)
                     if doc:
                         docs.append(doc)
@@ -179,7 +198,12 @@ class RAGPipeline:
         try:
             with open(path, encoding="utf-8", errors="ignore") as f:
                 content = f.read()
-            return {"path": str(path), "name": path.name, "content": content, "text": content}
+            return {
+                "path": str(path),
+                "name": path.name,
+                "content": content,
+                "text": content,
+            }
         except Exception:
             return {}
 
@@ -189,22 +213,28 @@ class RAGPipeline:
             text = doc.get("content", "")
             doc_name = doc.get("name", "unknown")
             for i in range(0, len(text), size - overlap):
-                chunk_text = text[i:i + size]
+                chunk_text = text[i : i + size]
                 if chunk_text.strip():
-                    chunks.append({
-                        "text": chunk_text,
-                        "source": doc_name,
-                        "offset": i,
-                        "metadata": {"source": doc_name, "offset": i},
-                    })
+                    chunks.append(
+                        {
+                            "text": chunk_text,
+                            "source": doc_name,
+                            "offset": i,
+                            "metadata": {"source": doc_name, "offset": i},
+                        }
+                    )
         return chunks
 
     def _build_index(self):
         self.vector_store.build_index(self.chunks)
         if self.display:
-            self.display.print_step(f"Built TF-IDF index with {len(self.vector_store.vocabulary)} terms")
+            self.display.print_step(
+                f"Built TF-IDF index with {len(self.vector_store.vocabulary)} terms"
+            )
 
-    def _search(self, query: str, top_k: int, metadata_filter: dict | None = None) -> list[dict]:
+    def _search(
+        self, query: str, top_k: int, metadata_filter: dict | None = None
+    ) -> list[dict]:
         return self.vector_store.search(query, top_k, metadata_filter)
 
     def save_index(self, path: str):
@@ -216,7 +246,9 @@ class RAGPipeline:
         self.vector_store.load_index(path)
         self.chunks = self.vector_store.documents
         if self.display:
-            self.display.print_success(f"Index loaded from {path} ({len(self.chunks)} chunks)")
+            self.display.print_success(
+                f"Index loaded from {path} ({len(self.chunks)} chunks)"
+            )
 
     def add_documents(self, docs: list[dict]):
         self.documents.extend(docs)

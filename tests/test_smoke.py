@@ -4,8 +4,10 @@ import pytest
 
 import neuralforge
 
+
 def test_package_importable():
     assert neuralforge is not None
+
 
 def test_import_all_submodules():
     errors = []

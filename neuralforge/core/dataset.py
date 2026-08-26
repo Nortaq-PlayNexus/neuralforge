@@ -33,7 +33,9 @@ class DatasetManager:
                     self.display.print_step(f"Fields: {', '.join(keys)}")
                 sample = data[0]
                 if isinstance(sample, dict):
-                    self.display.print_step(f"Sample: {json.dumps(sample, indent=2)[:500]}")
+                    self.display.print_step(
+                        f"Sample: {json.dumps(sample, indent=2)[:500]}"
+                    )
 
     def validate(self, path: str):
         p = Path(path)
@@ -55,7 +57,9 @@ class DatasetManager:
                 for issue in issues[:20]:
                     self.display.print_step(f"  {issue}")
             else:
-                self.display.print_success(f"Dataset is valid ({len(data)} samples, 0 issues)")
+                self.display.print_success(
+                    f"Dataset is valid ({len(data)} samples, 0 issues)"
+                )
 
     def split(self, input_path: str, output_path: str | None, ratio: float = 0.8):
         data = self._load(Path(input_path))
@@ -71,17 +75,25 @@ class DatasetManager:
         self._save(test, out_dir / "test.jsonl")
 
         if self.display:
-            self.display.print_success(f"Split {len(data)} samples -> train={len(train)}, test={len(test)}")
+            self.display.print_success(
+                f"Split {len(data)} samples -> train={len(train)}, test={len(test)}"
+            )
             self.display.print_step(f"Saved to {out_dir}/")
 
     def convert(self, input_path: str, output_path: str | None, fmt: str):
         data = self._load(Path(input_path))
-        out = Path(output_path) if output_path else Path(input_path).with_suffix(f".{fmt}")
+        out = (
+            Path(output_path)
+            if output_path
+            else Path(input_path).with_suffix(f".{fmt}")
+        )
         self._save(data, out)
         if self.display:
             self.display.print_success(f"Converted {len(data)} samples to {fmt}: {out}")
 
-    def augment(self, input_path: str, output_path: str, techniques: list[str] | None = None) -> dict:
+    def augment(
+        self, input_path: str, output_path: str, techniques: list[str] | None = None
+    ) -> dict:
         if techniques is None:
             techniques = ["synonym", "swap"]
 
@@ -123,7 +135,9 @@ class DatasetManager:
             "output": str(out),
         }
         if self.display:
-            self.display.print_success(f"Augmented {len(data)} -> {len(augmented)} samples")
+            self.display.print_success(
+                f"Augmented {len(data)} -> {len(augmented)} samples"
+            )
             for t, c in tech_counts.items():
                 self.display.print_step(f"  {t}: +{c}")
         return result
@@ -150,14 +164,23 @@ class DatasetManager:
             stats["null_fields"] = null_counts
 
             length_field = None
-            for candidate in ["text", "content", "input", "prompt", "output", "expected"]:
+            for candidate in [
+                "text",
+                "content",
+                "input",
+                "prompt",
+                "output",
+                "expected",
+            ]:
                 if candidate in keys:
                     length_field = candidate
                     break
 
             if length_field:
                 lengths = [len(str(row.get(length_field, ""))) for row in data]
-                stats["avg_length"] = round(sum(lengths) / len(lengths), 1) if lengths else 0
+                stats["avg_length"] = (
+                    round(sum(lengths) / len(lengths), 1) if lengths else 0
+                )
                 stats["min_length"] = min(lengths) if lengths else 0
                 stats["max_length"] = max(lengths) if lengths else 0
 
@@ -185,7 +208,9 @@ class DatasetManager:
 
         return stats
 
-    def deduplicate(self, input_path: str, output_path: str | None = None, threshold: float = 0.9) -> dict:
+    def deduplicate(
+        self, input_path: str, output_path: str | None = None, threshold: float = 0.9
+    ) -> dict:
         data = self._load(Path(input_path))
         if not data:
             return {"error": "No data"}
@@ -230,7 +255,9 @@ class DatasetManager:
             "output": str(out_path),
         }
         if self.display:
-            self.display.print_success(f"Deduplication: {len(data)} -> {len(unique)} samples")
+            self.display.print_success(
+                f"Deduplication: {len(data)} -> {len(unique)} samples"
+            )
             self.display.print_step(f"  Exact duplicates removed: {duplicates}")
             self.display.print_step(f"  Near-duplicates removed: {near_duplicates}")
         return result
@@ -317,7 +344,7 @@ class DatasetManager:
         simplified = []
         for w in words:
             if len(w) > 6:
-                simplified.append(w[:len(w)//2])
+                simplified.append(w[: len(w) // 2])
             else:
                 simplified.append(w)
         new_row[text_key] = " ".join(simplified)
