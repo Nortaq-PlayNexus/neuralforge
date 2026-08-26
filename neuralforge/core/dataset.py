@@ -33,9 +33,7 @@ class DatasetManager:
                     self.display.print_step(f"Fields: {', '.join(keys)}")
                 sample = data[0]
                 if isinstance(sample, dict):
-                    self.display.print_step(
-                        f"Sample: {json.dumps(sample, indent=2)[:500]}"
-                    )
+                    self.display.print_step(f"Sample: {json.dumps(sample, indent=2)[:500]}")
 
     def validate(self, path: str):
         p = Path(path)
@@ -57,9 +55,7 @@ class DatasetManager:
                 for issue in issues[:20]:
                     self.display.print_step(f"  {issue}")
             else:
-                self.display.print_success(
-                    f"Dataset is valid ({len(data)} samples, 0 issues)"
-                )
+                self.display.print_success(f"Dataset is valid ({len(data)} samples, 0 issues)")
 
     def split(self, input_path: str, output_path: str | None, ratio: float = 0.8):
         data = self._load(Path(input_path))
@@ -82,11 +78,7 @@ class DatasetManager:
 
     def convert(self, input_path: str, output_path: str | None, fmt: str):
         data = self._load(Path(input_path))
-        out = (
-            Path(output_path)
-            if output_path
-            else Path(input_path).with_suffix(f".{fmt}")
-        )
+        out = Path(output_path) if output_path else Path(input_path).with_suffix(f".{fmt}")
         self._save(data, out)
         if self.display:
             self.display.print_success(f"Converted {len(data)} samples to {fmt}: {out}")
@@ -135,9 +127,7 @@ class DatasetManager:
             "output": str(out),
         }
         if self.display:
-            self.display.print_success(
-                f"Augmented {len(data)} -> {len(augmented)} samples"
-            )
+            self.display.print_success(f"Augmented {len(data)} -> {len(augmented)} samples")
             for t, c in tech_counts.items():
                 self.display.print_step(f"  {t}: +{c}")
         return result
@@ -178,9 +168,7 @@ class DatasetManager:
 
             if length_field:
                 lengths = [len(str(row.get(length_field, ""))) for row in data]
-                stats["avg_length"] = (
-                    round(sum(lengths) / len(lengths), 1) if lengths else 0
-                )
+                stats["avg_length"] = round(sum(lengths) / len(lengths), 1) if lengths else 0
                 stats["min_length"] = min(lengths) if lengths else 0
                 stats["max_length"] = max(lengths) if lengths else 0
 
@@ -255,9 +243,7 @@ class DatasetManager:
             "output": str(out_path),
         }
         if self.display:
-            self.display.print_success(
-                f"Deduplication: {len(data)} -> {len(unique)} samples"
-            )
+            self.display.print_success(f"Deduplication: {len(data)} -> {len(unique)} samples")
             self.display.print_step(f"  Exact duplicates removed: {duplicates}")
             self.display.print_step(f"  Near-duplicates removed: {near_duplicates}")
         return result

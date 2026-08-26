@@ -43,12 +43,8 @@ class LocalFinetuner:
         if self.display:
             self.display.print_step(f"Dataset loaded: {len(dataset)} samples")
             self.display.print_step(f"Base model: {model_name}")
-            self.display.print_step(
-                f"Config: epochs={epochs}, lr={lr}, batch_size={batch_size}"
-            )
-            self.display.print_step(
-                f"LoRA: r={lora_r}, alpha={lora_alpha}, dropout={lora_dropout}"
-            )
+            self.display.print_step(f"Config: epochs={epochs}, lr={lr}, batch_size={batch_size}")
+            self.display.print_step(f"LoRA: r={lora_r}, alpha={lora_alpha}, dropout={lora_dropout}")
             self.display.print_step(
                 f"Scheduler: {scheduler}, warmup: {warmup_steps}, grad_accum: {gradient_accumulation_steps}"
             )
@@ -138,9 +134,7 @@ class LocalFinetuner:
 
         if self.display:
             self.display.print_step("Starting fine-tuning...")
-            self.display.print_step(
-                "(This may take a while depending on your hardware)"
-            )
+            self.display.print_step("(This may take a while depending on your hardware)")
 
         self._write_training_script(
             model_name,
@@ -161,9 +155,7 @@ class LocalFinetuner:
         )
 
         if self.display:
-            self.display.print_success(
-                f"Training script written to {output_dir}/train.py"
-            )
+            self.display.print_success(f"Training script written to {output_dir}/train.py")
             self.display.print_step("Run with: python train.py")
 
         return True

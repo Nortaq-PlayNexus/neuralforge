@@ -65,9 +65,7 @@ class VectorStore:
             return 0.0
         return dot / (norm_a * norm_b)
 
-    def search(
-        self, query: str, top_k: int = 5, metadata_filter: dict | None = None
-    ) -> list[dict]:
+    def search(self, query: str, top_k: int = 5, metadata_filter: dict | None = None) -> list[dict]:
         q_vec = self._compute_tfidf(query)
         scored = []
         for i, doc_vec in enumerate(self.tfidf_matrix):
@@ -153,9 +151,7 @@ class RAGPipeline:
 
         self._build_index()
 
-    def query(
-        self, query: str, top_k: int = 5, metadata_filter: dict | None = None
-    ) -> dict:
+    def query(self, query: str, top_k: int = 5, metadata_filter: dict | None = None) -> dict:
         if not self.chunks:
             return {
                 "query": query,
@@ -232,9 +228,7 @@ class RAGPipeline:
                 f"Built TF-IDF index with {len(self.vector_store.vocabulary)} terms"
             )
 
-    def _search(
-        self, query: str, top_k: int, metadata_filter: dict | None = None
-    ) -> list[dict]:
+    def _search(self, query: str, top_k: int, metadata_filter: dict | None = None) -> list[dict]:
         return self.vector_store.search(query, top_k, metadata_filter)
 
     def save_index(self, path: str):
@@ -246,9 +240,7 @@ class RAGPipeline:
         self.vector_store.load_index(path)
         self.chunks = self.vector_store.documents
         if self.display:
-            self.display.print_success(
-                f"Index loaded from {path} ({len(self.chunks)} chunks)"
-            )
+            self.display.print_success(f"Index loaded from {path} ({len(self.chunks)} chunks)")
 
     def add_documents(self, docs: list[dict]):
         self.documents.extend(docs)

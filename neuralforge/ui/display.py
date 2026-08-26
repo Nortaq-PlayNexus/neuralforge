@@ -24,9 +24,7 @@ class Display:
         console.print(f"[bold]Query:[/bold] {result.get('query', '')}")
         console.print()
         for i, r in enumerate(result.get("results", []), 1):
-            console.print(
-                f"  [{i}] score={r.get('score', 0)} source={r.get('source', '?')}"
-            )
+            console.print(f"  [{i}] score={r.get('score', 0)} source={r.get('source', '?')}")
             text = r.get("text", "")[:200]
             console.print(f"      {text}...")
         console.print()

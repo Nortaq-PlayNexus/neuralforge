@@ -101,9 +101,7 @@ for f in os.listdir(OUTPUT):
         with open(output / "export_onnx.py", "w") as f:
             f.write(script)
         if self.display:
-            self.display.print_success(
-                f"ONNX export script written to {output}/export_onnx.py"
-            )
+            self.display.print_success(f"ONNX export script written to {output}/export_onnx.py")
         return True
 
     def _export_torchscript(self, model_name: str, output: Path, **kwargs) -> bool:
@@ -214,9 +212,7 @@ def info():
 
         gpu_note = " (GPU)" if gpu else ""
         if self.display:
-            self.display.print_success(
-                f"Docker deployment{gpu_note} written to {output}/"
-            )
+            self.display.print_success(f"Docker deployment{gpu_note} written to {output}/")
             build_cmd = f"docker build -t {model_name} {output}"
             run_cmd = (
                 f"docker run --gpus all -p 8000:8000 {model_name}"
