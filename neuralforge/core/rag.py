@@ -1,9 +1,7 @@
 """RAG pipeline — document chunking, embedding, and retrieval."""
 
 from __future__ import annotations
-import json
 import math
-import os
 import pickle
 import re
 from collections import Counter
