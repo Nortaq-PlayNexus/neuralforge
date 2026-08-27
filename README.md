@@ -15,7 +15,7 @@ No API costs. No data leaving your machine. Full control.
 
 ---
 
-## Features
+\n---\n\n## Screenshots\n\n| Preview | Description |\n|---------|-------------|\n| ![screenshot](docs/screenshots/screenshot.png) | Main interface |\n| ![screenshot](docs/screenshots/demo.gif) | Demo |\n\n*Screenshots coming soon — placeholders auto-generated. Replace docs/screenshots/ with real captures.*\n\n## Features
 
 ### Fine-tuning
 - One-command fine-tuning with LoRA/PEFT
